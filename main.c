@@ -7,26 +7,26 @@
 #include "assets/combinations.h"
 
 
-#define MaxConsoleLines 100000
+#define MaxConsoleLines 500
 #define MaxFileLines 1048575
 
 
 void saveEConfigLineInFile(ElectronConfig *electron_config_array, FILE *file) {
     fprintf(file, ", %hu, %hu",
-            *electron_config_array->sOrbital.spinUp, *electron_config_array->sOrbital.spinDown);
+            electron_config_array->sOrbital.spinUp, electron_config_array->sOrbital.spinDown);
     for (int i_p = 0; i_p < P / 2; ++i_p) {
         fprintf(file, " ,%hu, %hu",
-                *electron_config_array->pOrbital[i_p].spinUp, *electron_config_array->pOrbital[i_p].spinDown);
+                electron_config_array->pOrbital[i_p].spinUp, electron_config_array->pOrbital[i_p].spinDown);
     }
     for (int i_d = 0; i_d < D / 2; ++i_d) {
         fprintf(file, " ,%hu, %hu",
-                *electron_config_array->dOrbital[i_d].spinUp, *electron_config_array->dOrbital[i_d].spinDown);
+                electron_config_array->dOrbital[i_d].spinUp, electron_config_array->dOrbital[i_d].spinDown);
     }
     for (int i_f = 0; i_f < F / 2; ++i_f) {
         fprintf(file, " ,%hu, %hu",
-                *electron_config_array->fOrbital[i_f].spinUp, *electron_config_array->fOrbital[i_f].spinDown);
+                electron_config_array->fOrbital[i_f].spinUp, electron_config_array->fOrbital[i_f].spinDown);
     }
-    fprintf(file, "\n");
+    fprintf(file, ", %f, %d\n", electron_config_array->ms, electron_config_array->ml);
 }
 
 void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array_len) {
@@ -73,7 +73,8 @@ void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array
                 "line, s_up, s_down, "
                 "p1_up, p1_down, p2_up, p2_down, p3_up, p3_down, "
                 "d1_up, d1_down, d2_up, d2_down, d3_up, d3_down, d4_up, d4_down, d5_up, d5_down, "
-                "f1_up, f1_down, f2_up, f2_down, f3_up, f3_down, f4_up, f4_down, f5_up, f5_down, f6_up, f6_down, f7_up, f7_down\n");
+                "f1_up, f1_down, f2_up, f2_down, f3_up, f3_down, f4_up, f4_down, f5_up, f5_down, f6_up, f6_down, f7_up, f7_down, "
+                "ms, ml\n");
         for (unsigned int i = 0; i < array_len; i++) {
             fprintf(file, "%u", i + 1);
             saveEConfigLineInFile(&(electron_config_array[i]), file);
@@ -165,6 +166,7 @@ void startCalculation(short b_print, short b_save) {
 }
 
 int main(int argc, char **argv) {
+    printf("%lu", sizeof(ElectronConfig));
     printf(UnderlineColorWhite "Started the Chemistry Program\n" TextReset);
     unsigned short user_command;
     if (argc != 1) {

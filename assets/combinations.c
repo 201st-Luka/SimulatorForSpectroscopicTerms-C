@@ -4,6 +4,7 @@
  */
 
 #include <string.h>
+#include <assert.h>
 
 #include "combinations.h"
 
@@ -25,6 +26,7 @@ unsigned int possibilities_for_combination(unsigned int n, unsigned int max_elec
 }
 
 void permute(short *subResult, unsigned int numberOnes, unsigned int length, unsigned int index, unsigned int *resultIndex, short result[][length]) {
+    assert(subResult != NULL && numberOnes <= length && index >= 0 && resultIndex != NULL && result != NULL);
     if (numberOnes <= 0) {
         memcpy(&(result[(*resultIndex)++]), subResult, length * sizeof(short));
     }
@@ -37,6 +39,7 @@ void permute(short *subResult, unsigned int numberOnes, unsigned int length, uns
 }
 
 void generate_permutation(unsigned int numberOnes, unsigned int length, short result[][length]) {
+    assert(numberOnes <= length && result != NULL);
     short subResult[length];
     unsigned int resultIndex = 0;
     memset(subResult, 0, length * sizeof(short));

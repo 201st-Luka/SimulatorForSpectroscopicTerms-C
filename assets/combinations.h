@@ -23,14 +23,14 @@ unsigned int combinations_k_l (unsigned int k, unsigned int l);
 
 /*
  * computes the possibilities for a combination (wrapper of combinations_k_l)
- * @precondition:   k, l > 0
- * @postcondition:  combinations_k_l becomes l! / (k! * (l - k)!)
+ * @precondition:   n, max_electrons > 0
+ * @postcondition:  combinations_k_max_electrons becomes max_electrons! / (n! * (max_electrons - n)!)
  */
 unsigned int possibilities_for_combination(unsigned int n, unsigned int max_electrons);
 
 /*
  * permutes 2 numbers in the array (recursive)
- * @precondition:   subResult != NULL, numberOnes <= length, index > 0, resultIndex != NULL, result != NULL
+ * @precondition:   subResult != NULL, numberOnes <= length, index >= 0, resultIndex != NULL, result != NULL
  * @postcondition:  /
  */
 void permute(short *subResult, unsigned int numberOnes, unsigned int length, unsigned int index, unsigned int *resultIndex, short result[][length]);
