@@ -42,7 +42,8 @@ typedef struct {
     Orbital pOrbital[3];
     Orbital dOrbital[5];
     Orbital fOrbital[7];
-    float ms, ml;
+    float ms;
+    int ml;
 } ElectronConfig;
 
 
@@ -80,9 +81,9 @@ void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
  *                  and possibilities_s, possibilities_p, possibilities_d, possibilities_f > 0
  * @postcondition:  electronConfig gets the right pointer values and ms, ml are calculated
  */
-void econfig_pointers(ElectronConfig *electronConfig,
-                      unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
-                      short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F]);
+void econfig_manipulation(ElectronConfig *electronConfig,
+                          unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
+                          short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F]);
 
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H
