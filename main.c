@@ -95,6 +95,7 @@ void startCalculation(short b_print, short b_save) {
     unsigned short input[4] = {0, 0, 0, 0};
     // keyboard input demand for number of electrons
     scanf(" %hu, %hu, %hu, %hu", &input[0], &input[1], &input[2], &input[3]);
+    while ((getchar()) != '\n');
 
     // check if input is valid
     if (input[0] <= S && input[1] <= P && input[2] <= D && input[3] <= F) {
@@ -180,6 +181,8 @@ int main(int argc, char **argv) {
                " 0 Close the program\n"
                "Selection: ");
         scanf("%1hu", &user_command);
+        // catch all chars that are in the buffer
+        while ((getchar()) != '\n');
 
         // switch different cases for the entered user command
         switch (user_command) {
