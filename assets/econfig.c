@@ -1,6 +1,7 @@
-//
-// Created by luka on 08.12.22.
-//
+/*
+ * econfig file
+ * contains the implementations of the functions
+ */
 
 #include <stdio.h>
 
@@ -24,7 +25,7 @@ void printArrow(const short *spinUp, const short *spinDown) {
     } else if (*spinDown) {
         printf(ArrowSpinDown);
     } else {
-        printf(" ");
+        printf(".");
     }
 }
 

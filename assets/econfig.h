@@ -1,6 +1,7 @@
-//
-// Created by luka on 08.12.22.
-//
+/*
+ * econfig header file
+ * contains macros and prototypes of functions
+ */
 
 #ifndef SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H
 #define SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H
@@ -47,40 +48,37 @@ typedef struct {
 
 /*
  * enumerates over the electronConfig array to fill in the values
- * input:   unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
- *          short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F],
- *          const unsigned short number_of_electrons[4]
- * output:  electronConfig is a pointer, so no object has to be returned
+ * @precondition:   s_possibilities, p_possibilities, d_possibilities, f_possibilities are initialised arrays and number_of_electrons is valid
+ * @postcondition:  combinations are saved in s_possibilities, p_possibilities, d_possibilities, f_possibilities
  */
 void permutation_creation(short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F],
                           const unsigned short *number_of_electrons);
 /*
  * prints out the right arrow for the orbital
- * input:   const short *spinUp, const short *spinDown
- * output:  no output, print arrow in console
+ * @precondition:   spinUp and spinDown != NULL
+ * @postcondition:  /
  */
 void printArrow(const short *spinUp, const short *spinDown);
 
 /*
  * prints out the values of an ElectronConfig element
- * input:   ElectronConfig *electronConfig
- * output:  no output, printf in console
+ * @precondition:   electronConfig != NULL
+ * @postcondition:  /
  */
 void print_econfig_element(ElectronConfig *electronConfig);
 
 /*
  * prints out every single element of the electronConfig array
- * input:   ElectronConfig electronConfig[], unsigned int array_len
- * output:  printed in the console
+ * @precondition:   electronConfig != NULL and array_len > 0
+ * @postcondition:  /
  */
 void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
 
 /*
  * set the pointer of the ElectronConfig array to the created permutations
- * input:   ElectronConfig electronConfig[],
- *          unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
- *          short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F]
- * output:  the ElectronConfig array gets updated, no output
+ * @precondition:   electronConfig != NULL, s_possibilities, p_possibilities, d_possibilities, f_possibilities have the right values
+ *                  and possibilities_s, possibilities_p, possibilities_d, possibilities_f > 0
+ * @postcondition:  electronConfig gets the right pointer values and ms, ml are calculated
  */
 void econfig_pointers(ElectronConfig *electronConfig,
                       unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,

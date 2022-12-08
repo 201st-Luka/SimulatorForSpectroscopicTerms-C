@@ -1,6 +1,7 @@
-//
-// Created by luka on 08.12.22.
-//
+/*
+ * combinations file
+ * contains the implementations of the functions
+ */
 
 #include "combinations.h"
 
