@@ -7,6 +7,10 @@
 #include "assets/combinations.h"
 
 
+#define MaxConsoleLines 100000
+#define MaxFileLines 1048575
+
+
 void saveEConfigLineInFile(ElectronConfig *electron_config_array, FILE *file) {
     fprintf(file, ", %hu, %hu",
             *electron_config_array->sOrbital.spinUp, *electron_config_array->sOrbital.spinDown);
@@ -119,20 +123,24 @@ void startCalculation(short b_print, short b_save) {
         permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
                              input);
 
-        econfig_pointers(electron_config_array,
-                         possibilities_f, possibilities_d, possibilities_p, possibilities_s,
-                         s_possibilities, p_possibilities, d_possibilities, f_possibilities);
+        econfig_manipulation(electron_config_array,
+                             possibilities_f, possibilities_d, possibilities_p, possibilities_s,
+                             s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
         if (b_print) {
-            printf("Number of possibilities: %d\n", possibilities_s * possibilities_p * possibilities_d * possibilities_f);
-            print_econfig(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxConsoleLines) {
+                printf("Number of possibilities: %u\n", possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+                print_econfig(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            } else {
+                printf(ColorRed "So much combinations can not printed in the console. The maximum is %d.\n" TextReset, MaxConsoleLines);
+            }
         }
 
         if (b_save) {
-            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < 1048576) {
+            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
                 saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
             } else {
-                printf("So many combinations can not be saved in a file.\n");
+                printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
             }
         }
 
@@ -141,8 +149,8 @@ void startCalculation(short b_print, short b_save) {
 
     } else {
         // input is invalid
-        printf("Your entered values are not valid."
-               "\nThe maximal valid values are %d, %d, %d, %d for s, p, d, f.\n"
+        printf("Your entered values are not valid.\n"
+               "The maximal valid values are %d, %d, %d, %d for s, p, d, f.\n"
                "Your values were:\n", S, P, D, F);
         if (input[0] <= S) printf("%u, ", input[0]);
         else printf(ColorRed "%u" TextReset ", ", input[0]);

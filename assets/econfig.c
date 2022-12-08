@@ -26,7 +26,7 @@ void printArrow(const short *spinUp, const short *spinDown) {
     } else if (*spinDown) {
         printf(ArrowSpinDown);
     } else {
-        printf(".");
+        printf("\u02FD");
     }
 }
 

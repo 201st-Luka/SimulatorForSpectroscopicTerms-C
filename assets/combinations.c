@@ -3,7 +3,10 @@
  * contains the implementations of the functions
  */
 
+#include <string.h>
+
 #include "combinations.h"
+
 
 unsigned long int factorial (unsigned int n) {
     long int result = 1;
@@ -20,6 +23,7 @@ unsigned int combinations_k_l (unsigned int k, unsigned int l) {
 unsigned int possibilities_for_combination(unsigned int n, unsigned int max_electrons) {
     return combinations_k_l(n, max_electrons);
 }
+
 void permute(short *subResult, unsigned int numberOnes, unsigned int length, unsigned int index, unsigned int *resultIndex, short result[][length]) {
     if (numberOnes <= 0) {
         memcpy(&(result[(*resultIndex)++]), subResult, length * sizeof(short));

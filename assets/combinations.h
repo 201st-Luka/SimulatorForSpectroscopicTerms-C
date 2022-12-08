@@ -22,7 +22,7 @@ unsigned long int factorial (unsigned int n);
 unsigned int combinations_k_l (unsigned int k, unsigned int l);
 
 /*
- * computes the possibilities for a combination ()
+ * computes the possibilities for a combination (wrapper of combinations_k_l)
  * @precondition:   k, l > 0
  * @postcondition:  combinations_k_l becomes l! / (k! * (l - k)!)
  */

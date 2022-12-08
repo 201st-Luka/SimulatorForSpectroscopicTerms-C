@@ -8,6 +8,7 @@
 
 
 // colors
+
 #define ColorRed "\e[31m"
 #define ColorGreen "\e[32m"
 #define ColorYellow "\e[33m"
@@ -17,16 +18,19 @@
 #define ColorWhite "\e[0;37m"
 
 // text styles
+
 #define UnderlineColorWhite "\e[4;37m"
 #define TextReset "\e[0m"
 
 // orbitals
+
 #define S 2
 #define P 6
 #define D 10
 #define F 14
 
 // harpoon arrows
+
 #define ArrowSpinUp "\u21bf"
 #define ArrowSpinDown "\u21c2"
 #define ArrowSpinBoth "\u296e"
