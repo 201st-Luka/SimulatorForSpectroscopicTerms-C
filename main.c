@@ -8,8 +8,7 @@
 
 
 #define MaxConsoleLines 500
-#define MaxFileLines 1048575
-
+#define MaxFileLines 1048576
 
 void saveEConfigLineInFile(ElectronConfig *electron_config_array, FILE *file) {
     fprintf(file, ", %hu, %hu",
@@ -26,7 +25,7 @@ void saveEConfigLineInFile(ElectronConfig *electron_config_array, FILE *file) {
         fprintf(file, " ,%hu, %hu",
                 electron_config_array->fOrbital[i_f].spinUp, electron_config_array->fOrbital[i_f].spinDown);
     }
-    fprintf(file, ", %f, %d\n", electron_config_array->ms, electron_config_array->ml);
+    fprintf(file, ", %d, %.1f\n", electron_config_array->ml, electron_config_array->ms);
 }
 
 void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array_len) {
@@ -40,31 +39,30 @@ void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array
     filename[2] = 's';
     filename[3] = 'k';
     filename[4] = '_';
-    filename[5] = (time_formatted->tm_year + 1900) / 1000 + 48;
-    filename[6] = ((time_formatted->tm_year + 1900) % 1000) / 100 + 48;
-    filename[7] = ((time_formatted->tm_year + 1900) % 100) / 10 + 48;
-    filename[8] = (time_formatted->tm_year + 1900) % 10 + 48;
+    filename[5] = (char)((time_formatted->tm_year + 1900) / 1000 + 48);
+    filename[6] = (char)(((time_formatted->tm_year + 1900) % 1000) / 100 + 48);
+    filename[7] = (char)(((time_formatted->tm_year + 1900) % 100) / 10 + 48);
+    filename[8] = (char)((time_formatted->tm_year + 1900) % 10 + 48);
     filename[9] = '-';
-    filename[10] = (time_formatted->tm_mon + 1) / 10 + 48;
-    filename[11] = (time_formatted->tm_mon + 1) % 10 + 48;
+    filename[10] = (char)((time_formatted->tm_mon + 1) / 10 + 48);
+    filename[11] = (char)((time_formatted->tm_mon + 1) % 10 + 48);
     filename[12] = '-';
-    filename[13] = time_formatted->tm_mday / 10 + 48;
-    filename[14] = time_formatted->tm_mday % 10 + 48;
+    filename[13] = (char)(time_formatted->tm_mday / 10 + 48);
+    filename[14] = (char)(time_formatted->tm_mday % 10 + 48);
     filename[15] = '_';
-    filename[16] = time_formatted->tm_hour / 10 + 48;
-    filename[17] = time_formatted->tm_hour % 10 + 48;
+    filename[16] = (char)(time_formatted->tm_hour / 10 + 48);
+    filename[17] = (char)(time_formatted->tm_hour % 10 + 48);
     filename[18] = '-';
-    filename[19] = time_formatted->tm_min / 10 + 48;
-    filename[20] = time_formatted->tm_min % 10 + 48;
+    filename[19] = (char)(time_formatted->tm_min / 10 + 48);
+    filename[20] = (char)(time_formatted->tm_min % 10 + 48);
     filename[21] = '-';
-    filename[22] = time_formatted->tm_sec / 10 + 48;
-    filename[23] = time_formatted->tm_sec % 10 + 48;
+    filename[22] = (char)(time_formatted->tm_sec / 10 + 48);
+    filename[23] = (char)(time_formatted->tm_sec % 10 + 48);
     filename[24] = '.';
     filename[25] = 'c';
     filename[26] = 's';
     filename[27] = 'v';
     filename[28] = '\0';
-
 
     FILE *file = fopen(filename, "w");
     if (file != NULL) {
@@ -85,6 +83,98 @@ void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array
         printf("Could not save values in a file. Please try again.\n");
     }
 
+}
+
+void startCalculationArgs(int argc, char **argv) {
+    unsigned short command_line_input[4] = {0, 0, 0, 0};
+    short help_mode = 0;
+    short save_to_file = 0;
+    for (int i = 1; i < argc; i++) {
+        if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "-S")) {
+            if (atoi(argv[i + 1]) <= S) {
+                command_line_input[0] = atoi(argv[++i]);
+            } else {
+                printf("S is invalid. Your input must be smaller then or equal to %d. Your input was "
+                       ColorRed "%d" TextReset ".\n", S, atoi(argv[i + 1]));
+            }
+        }
+        if (!strcmp(argv[i], "-p") || !strcmp(argv[i], "-P")) {
+            if (atoi(argv[i + 1]) <= P) {
+                command_line_input[1] = atoi(argv[++i]);
+            } else {
+                printf("P is invalid. Your input must be smaller then or equal to %d. Your input was "
+                       ColorRed "%d" TextReset ".\n", P, atoi(argv[i + 1]));
+            }
+        }
+        if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "-D")) {
+            if (atoi(argv[i + 1]) <= D) {
+                command_line_input[2] = atoi(argv[++i]);
+            } else {
+                printf("D is invalid. Your input must be smaller then or equal to %d. Your input was "
+                       ColorRed "%d" TextReset ".\n", D, atoi(argv[i + 1]));
+            }
+        }
+        if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "-F")) {
+            if (atoi(argv[i + 1]) <= F) {
+                command_line_input[3] = atoi(argv[++i]);
+            } else {
+                printf("F is invalid. Your input must be smaller then or equal to %d. Your input was "
+                       ColorRed "%d" TextReset ".\n", F, atoi(argv[i + 1]));
+            }
+        }
+        if (!strcmp(argv[i], "-save")) save_to_file = 1;
+        if (!strcmp(argv[i], "-help") || !strcmp(argv[i], "-h") || !strcmp(argv[i], "-H")) help_mode = 1;
+    }
+    if (help_mode) {
+        printf("usage: SimulatorForSpectroscopicTerms [-option] ...\n"
+               "Options and arguments:\n"
+               "-help  : show this list\n"
+               "-s val : val is the number of electrons for the s-orbital (0 -> %d)\n"
+               "-p val : val is the number of electrons for the p-orbital (0 -> %d)\n"
+               "-d val : val is the number of electrons for the d-orbital (0 -> %d)\n"
+               "-f val : val is the number of electrons for the f-orbital (0 -> %d)\n"
+               "-save  : save the electron configuration in a file (same directory as application)", S, P, D, F);
+        return;
+    }
+    printf("s=%hd\np=%hd\nd=%hd\nf=%hd\n", command_line_input[0], command_line_input[1], command_line_input[2], command_line_input[3]);
+
+    // calculate combinations
+    unsigned int possibilities_s = possibilities_for_combination(command_line_input[0], S),
+            possibilities_p = possibilities_for_combination(command_line_input[1], P),
+            possibilities_d = possibilities_for_combination(command_line_input[2], D),
+            possibilities_f = possibilities_for_combination(command_line_input[3], F);
+
+    short s_possibilities[possibilities_s][S],
+            p_possibilities[possibilities_p][P],
+            d_possibilities[possibilities_d][D],
+            f_possibilities[possibilities_f][F];
+
+    memset(s_possibilities, 0, possibilities_s * S * sizeof(short));
+    memset(p_possibilities, 0, possibilities_p * P * sizeof(short));
+    memset(d_possibilities, 0, possibilities_d * D * sizeof(short));
+    memset(f_possibilities, 0, possibilities_f * F * sizeof(short));
+
+    ElectronConfig *electron_config_array = (ElectronConfig*) malloc(
+            possibilities_s * possibilities_p * possibilities_d * possibilities_f * sizeof(ElectronConfig)
+    );
+
+    permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
+                         command_line_input);
+
+    econfig_manipulation(electron_config_array,
+                         possibilities_f, possibilities_d, possibilities_p, possibilities_s,
+                         s_possibilities, p_possibilities, d_possibilities, f_possibilities);
+
+    if (save_to_file) {
+        if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
+            saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+        } else {
+            printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
+        }
+    }
+
+    // free the memory for electron_config_array (because of dynamic allocation)
+    free(electron_config_array);
 }
 
 void close() {
@@ -166,13 +256,14 @@ void startCalculation(short b_print, short b_save) {
 }
 
 int main(int argc, char **argv) {
-    printf("%lu", sizeof(ElectronConfig));
-    printf(UnderlineColorWhite "Started the Chemistry Program\n" TextReset);
     unsigned short user_command;
     if (argc != 1) {
-        printf("multiple arguments");
+        startCalculationArgs(argc, argv);
         user_command = 0;
-    } else user_command = 1;
+    } else {
+        printf(UnderlineColorWhite "Started the Chemistry Program\n" TextReset);
+        user_command = 1;
+    }
 
     // main loop
     while (user_command) {

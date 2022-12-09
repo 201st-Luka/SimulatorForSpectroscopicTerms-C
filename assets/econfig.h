@@ -1,6 +1,6 @@
 /*
  * econfig header file
- * contains macros and prototypes of functions
+ * contains macros and function prototypes
  */
 
 #ifndef SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H

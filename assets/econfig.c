@@ -52,7 +52,7 @@ void print_econfig_element(ElectronConfig *electronConfig) {
     for (int i_f = 0; i_f < F / 2; ++i_f) {
         printArrow(electronConfig->fOrbital[i_f].spinUp, electronConfig->fOrbital[i_f].spinDown);
     }
-    printf(ColorWhite " Ms: %4.1f Ml: %2d" TextReset "\n", electronConfig->ms, electronConfig->ml);
+    printf(ColorWhite " Ml: %2d Ms: %4.1f" TextReset "\n", electronConfig->ml, electronConfig->ms);
 }
 
 void print_econfig(ElectronConfig *electronConfig, unsigned int array_len) {

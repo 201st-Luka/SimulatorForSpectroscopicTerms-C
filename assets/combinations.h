@@ -1,6 +1,6 @@
 /*
  * combinations header file
- * contains prototypes of functions
+ * contains function prototypes
  */
 
 #ifndef SIMULATORFORSPECTROSCOPICTERMS_COMBINATIONS_H
