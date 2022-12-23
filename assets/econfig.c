@@ -32,7 +32,7 @@ void printArrow(short spinUp, short spinDown) {
     } else if (spinDown) {
         printf(ArrowSpinDown);
     } else {
-        printf("\u02FD");
+        printf(BracketSpace);
     }
 }
 
@@ -59,7 +59,7 @@ void print_econfig(ElectronConfig *electronConfig, unsigned int array_len) {
     assert(electronConfig != NULL && array_len > 0);
     printf("Possibilities:\n");
     for (unsigned int i = 0; i < array_len; i++) {
-        printf(ColorCyan "line: %8u ", i + 1);
+        printf(ColorCyan "line: %3u ", i + 1);
         print_econfig_element(&electronConfig[i]);
     }
 }
@@ -99,7 +99,7 @@ void econfig_manipulation(ElectronConfig *electronConfig,
         electronConfig[i].ms /= 2;
     }
 }
-
+/*
 void buildGroups(ElectronConfig *electronConfig, unsigned int ec_array_len, Group *groups, unsigned int group_array_len) {
     assert(electronConfig != NULL && groups != NULL && ec_array_len > 0 && group_array_len > 0);
-}
+}*/

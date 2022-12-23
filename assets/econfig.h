@@ -34,6 +34,7 @@
 #define ArrowSpinUp "\u21bf"
 #define ArrowSpinDown "\u21c2"
 #define ArrowSpinBoth "\u296e"
+#define BracketSpace "\u02FD"
 
 /*
  * Orbital struct
@@ -57,15 +58,6 @@ typedef struct {
     float ms;
     unsigned short group;
 } ElectronConfig;
-
-/*
- * Group struct
- * 8 bytes
- */
-typedef struct {
-    unsigned short abs_ml, abs_ms;
-    unsigned int group_elements;
-} Group;
 
 
 /*
@@ -113,7 +105,7 @@ void econfig_manipulation(ElectronConfig *electronConfig,
  * @precondition:   electronConfig and groups != NULL, ec_array_len and group_array_len > 0
  * @postcondition:  groups gets values, electronConfig[x].group is updated
  */
-void buildGroups(ElectronConfig *electronConfig, unsigned int ec_array_len, Group *groups, unsigned int group_array_len);
+//void buildGroups(ElectronConfig *electronConfig, unsigned int ec_array_len, Group *groups, unsigned int group_array_len);
 
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H

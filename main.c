@@ -5,6 +5,7 @@
 
 #include "assets/econfig.h"
 #include "assets/combinations.h"
+#include "assets/grouping.h"
 
 
 #define MaxConsoleLines 500
@@ -82,7 +83,6 @@ void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array
     } else {
         printf("Could not save values in a file. Please try again.\n");
     }
-
 }
 
 void startCalculationArgs(int argc, char **argv) {
@@ -158,23 +158,28 @@ void startCalculationArgs(int argc, char **argv) {
             possibilities_s * possibilities_p * possibilities_d * possibilities_f * sizeof(ElectronConfig)
     );
 
-    permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
-                         command_line_input);
+    if (electron_config_array != NULL) {
+        permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
+                             command_line_input);
 
-    econfig_manipulation(electron_config_array,
-                         possibilities_f, possibilities_d, possibilities_p, possibilities_s,
-                         s_possibilities, p_possibilities, d_possibilities, f_possibilities);
+        econfig_manipulation(electron_config_array,
+                             possibilities_f, possibilities_d, possibilities_p, possibilities_s,
+                             s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
-    if (save_to_file) {
-        if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
-            saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
-        } else {
-            printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
+        if (save_to_file) {
+            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
+                saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            } else {
+                printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
+            }
         }
+
+        // free the memory for electron_config_array (because of dynamic allocation)
+        free(electron_config_array);
+    } else {
+        printf(ColorRed "You dont have enough free memory." TextReset);
     }
 
-    // free the memory for electron_config_array (because of dynamic allocation)
-    free(electron_config_array);
 }
 
 void close() {
@@ -218,6 +223,11 @@ void startCalculation(short b_print, short b_save) {
         econfig_manipulation(electron_config_array,
                              possibilities_f, possibilities_d, possibilities_p, possibilities_s,
                              s_possibilities, p_possibilities, d_possibilities, f_possibilities);
+
+        Group *groups_ptr = malloc(sizeof(Group));
+        Groups groups;
+        groups.group = groups_ptr;
+        groups.group_count = 1;
 
         if (b_print) {
             if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxConsoleLines) {
