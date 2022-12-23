@@ -32,7 +32,7 @@ void permute(unsigned short *result, unsigned short perm, unsigned int ones, uns
         (*result_len)++;
     } else if (i < length) {
         permute(result, (perm << 1) + 1, ones - 1, length, i + 1, result_len);
-        permute(result, perm << 1, ones, length, i + 1, result_len);
+        if ((length - i) > ones) permute(result, perm << 1, ones, length, i + 1, result_len);
     }
 }
 
