@@ -8,23 +8,12 @@
 #include "assets/grouping.h"
 
 
-#define MaxConsoleLines 500
+#define MaxConsoleLines 1680
 #define MaxFileLines 1048576
 
 void saveEConfigLineInFile(ElectronConfig *electron_config_array, FILE *file) {
-    fprintf(file, ", %hu, %hu",
-            electron_config_array->sOrbital.spinUp, electron_config_array->sOrbital.spinDown);
-    for (int i_p = 0; i_p < P / 2; ++i_p) {
-        fprintf(file, " ,%hu, %hu",
-                electron_config_array->pOrbital[i_p].spinUp, electron_config_array->pOrbital[i_p].spinDown);
-    }
-    for (int i_d = 0; i_d < D / 2; ++i_d) {
-        fprintf(file, " ,%hu, %hu",
-                electron_config_array->dOrbital[i_d].spinUp, electron_config_array->dOrbital[i_d].spinDown);
-    }
-    for (int i_f = 0; i_f < F / 2; ++i_f) {
-        fprintf(file, " ,%hu, %hu",
-                electron_config_array->fOrbital[i_f].spinUp, electron_config_array->fOrbital[i_f].spinDown);
+    for (short i = 31; i >= 0; --i) {
+        fprintf(file, ", %u", (electron_config_array->orbitals & (1 << i)) >> i);
     }
     fprintf(file, ", %d, %.1f\n", electron_config_array->ml, electron_config_array->ms);
 }
@@ -139,23 +128,18 @@ void startCalculationArgs(int argc, char **argv) {
     printf("s=%hd\np=%hd\nd=%hd\nf=%hd\n", command_line_input[0], command_line_input[1], command_line_input[2], command_line_input[3]);
 
     // calculate combinations
-    unsigned int possibilities_s = possibilities_for_combination(command_line_input[0], S),
-            possibilities_p = possibilities_for_combination(command_line_input[1], P),
-            possibilities_d = possibilities_for_combination(command_line_input[2], D),
-            possibilities_f = possibilities_for_combination(command_line_input[3], F);
+    unsigned int possibilities_for_s = possibilities_for_combination(command_line_input[0], S),
+            possibilities_for_p = possibilities_for_combination(command_line_input[1], P),
+            possibilities_for_d = possibilities_for_combination(command_line_input[2], D),
+            possibilities_for_f = possibilities_for_combination(command_line_input[3], F);
 
-    short s_possibilities[possibilities_s][S],
-            p_possibilities[possibilities_p][P],
-            d_possibilities[possibilities_d][D],
-            f_possibilities[possibilities_f][F];
-
-    memset(s_possibilities, 0, possibilities_s * S * sizeof(short));
-    memset(p_possibilities, 0, possibilities_p * P * sizeof(short));
-    memset(d_possibilities, 0, possibilities_d * D * sizeof(short));
-    memset(f_possibilities, 0, possibilities_f * F * sizeof(short));
+    unsigned short s_possibilities[possibilities_for_s],
+            p_possibilities[possibilities_for_p],
+            d_possibilities[possibilities_for_d],
+            f_possibilities[possibilities_for_f];
 
     ElectronConfig *electron_config_array = (ElectronConfig*) malloc(
-            possibilities_s * possibilities_p * possibilities_d * possibilities_f * sizeof(ElectronConfig)
+            possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f * sizeof(ElectronConfig)
     );
 
     if (electron_config_array != NULL) {
@@ -163,12 +147,12 @@ void startCalculationArgs(int argc, char **argv) {
                              command_line_input);
 
         econfig_manipulation(electron_config_array,
-                             possibilities_f, possibilities_d, possibilities_p, possibilities_s,
+                             possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
                              s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
         if (save_to_file) {
-            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
-                saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            if (possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f < MaxFileLines) {
+                saveEConfigInFile(electron_config_array, possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
             } else {
                 printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
             }
@@ -198,49 +182,46 @@ void startCalculation(short b_print, short b_save) {
         // input is valid
         printf("Processing your inputs...\n");
         // calculate combinations
-        unsigned int possibilities_s = possibilities_for_combination(input[0], S),
-                possibilities_p = possibilities_for_combination(input[1], P),
-                possibilities_d = possibilities_for_combination(input[2], D),
-                possibilities_f = possibilities_for_combination(input[3], F);
+        unsigned int possibilities_for_s = possibilities_for_combination(input[0], S),
+                possibilities_for_p = possibilities_for_combination(input[1], P),
+                possibilities_for_d = possibilities_for_combination(input[2], D),
+                possibilities_for_f = possibilities_for_combination(input[3], F);
 
-        short s_possibilities[possibilities_s][S],
-                p_possibilities[possibilities_p][P],
-                d_possibilities[possibilities_d][D],
-                f_possibilities[possibilities_f][F];
-
-        memset(s_possibilities, 0, possibilities_s * S * sizeof(short));
-        memset(p_possibilities, 0, possibilities_p * P * sizeof(short));
-        memset(d_possibilities, 0, possibilities_d * D * sizeof(short));
-        memset(f_possibilities, 0, possibilities_f * F * sizeof(short));
+        unsigned short s_possibilities[possibilities_for_s],
+                p_possibilities[possibilities_for_p],
+                d_possibilities[possibilities_for_d],
+                f_possibilities[possibilities_for_f];
 
         ElectronConfig *electron_config_array = (ElectronConfig*) malloc(
-                possibilities_s * possibilities_p * possibilities_d * possibilities_f * sizeof(ElectronConfig)
+                possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f * sizeof(ElectronConfig)
         );
 
         permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
                              input);
 
         econfig_manipulation(electron_config_array,
-                             possibilities_f, possibilities_d, possibilities_p, possibilities_s,
+                             possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
                              s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
-        Group *groups_ptr = malloc(sizeof(Group));
-        Groups groups;
-        groups.group = groups_ptr;
-        groups.group_count = 1;
+        /*
+         * Group *groups_ptr = malloc(sizeof(Group));
+         * Groups groups;
+         * groups.group = groups_ptr;
+         * groups.group_count = 1;
+         */
 
         if (b_print) {
-            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxConsoleLines) {
-                printf("Number of possibilities: %u\n", possibilities_s * possibilities_p * possibilities_d * possibilities_f);
-                print_econfig(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            if (possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f <= MaxConsoleLines) {
+                printf("Number of possibilities: %u\n", possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
+                print_econfig(electron_config_array, possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
             } else {
-                printf(ColorRed "So much combinations can not printed in the console. The maximum is %d.\n" TextReset, MaxConsoleLines);
+                printf(ColorRed "So much combinations can not be printed in the console. The maximum is %d.\n" TextReset, MaxConsoleLines);
             }
         }
 
         if (b_save) {
-            if (possibilities_s * possibilities_p * possibilities_d * possibilities_f < MaxFileLines) {
-                saveEConfigInFile(electron_config_array, possibilities_s * possibilities_p * possibilities_d * possibilities_f);
+            if (possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f < MaxFileLines) {
+                saveEConfigInFile(electron_config_array, possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
             } else {
                 printf(ColorRed "So many combinations can not be saved in a file. The maximum is %d.\n" TextReset, MaxFileLines);
             }

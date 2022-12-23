@@ -25,23 +25,19 @@ unsigned int possibilities_for_combination(unsigned int n, unsigned int max_elec
     return combinations_k_l(n, max_electrons);
 }
 
-void permute(short *subResult, unsigned int numberOnes, unsigned int length, unsigned int index, unsigned int *resultIndex, short result[][length]) {
-    assert(subResult != NULL && numberOnes <= length && index >= 0 && resultIndex != NULL && result != NULL);
-    if (numberOnes <= 0) {
-        memcpy(&(result[(*resultIndex)++]), subResult, length * sizeof(short));
-    }
-    else if (index < length) {
-        subResult[index] = 1;
-        permute(subResult, numberOnes - 1, length, index + 1, resultIndex, result);
-        subResult[index] = 0;
-        permute(subResult, numberOnes, length, index + 1, resultIndex, result);
+void permute(unsigned short *result, unsigned short perm, unsigned int ones, unsigned int length, unsigned int i, unsigned int *result_len) {
+    assert(result != NULL && ones <= length && i <= length && result_len != NULL);
+    if (ones <= 0) {
+        result[*result_len] = perm << (length - i);
+        (*result_len)++;
+    } else if (i < length) {
+        permute(result, (perm << 1) + 1, ones - 1, length, i + 1, result_len);
+        permute(result, perm << 1, ones, length, i + 1, result_len);
     }
 }
 
-void generate_permutation(unsigned int numberOnes, unsigned int length, short result[][length]) {
-    assert(numberOnes <= length && result != NULL);
-    short subResult[length];
-    unsigned int resultIndex = 0;
-    memset(subResult, 0, length * sizeof(short));
-    permute(subResult, numberOnes, length, 0, &resultIndex, result);
+void generate_permutation(unsigned int ones, unsigned int length, unsigned short *result) {
+    assert(result != NULL && ones <= length);
+    unsigned int result_len = 0;
+    permute(result, 0, ones, length, 0, &result_len);
 }

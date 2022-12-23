@@ -11,7 +11,7 @@
 #include "combinations.h"
 
 
-void permutation_creation(short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F],
+void permutation_creation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
                           const unsigned short *number_of_electrons) {
     assert(
             s_possibilities != NULL && p_possibilities != NULL && d_possibilities != NULL && f_possibilities != NULL &&
@@ -24,12 +24,12 @@ void permutation_creation(short s_possibilities[][S], short p_possibilities[][P]
     generate_permutation(number_of_electrons[3], F, f_possibilities);
 }
 
-void printArrow(short spinUp, short spinDown) {
-    if (spinUp && spinDown) {
+void printArrow(unsigned short spins) {
+    if ((spins & 2) && (spins & 1)) {
         printf(ArrowSpinBoth);
-    } else if (spinUp) {
+    } else if (spins & 2) {
         printf(ArrowSpinUp);
-    } else if (spinDown) {
+    } else if (spins & 1) {
         printf(ArrowSpinDown);
     } else {
         printf(BracketSpace);
@@ -39,18 +39,18 @@ void printArrow(short spinUp, short spinDown) {
 void print_econfig_element(ElectronConfig *electronConfig) {
     assert(electronConfig != NULL);
     printf(ColorGreen "s: ");
-    printArrow(electronConfig->sOrbital.spinUp, electronConfig->sOrbital.spinDown);
+    printArrow((electronConfig->orbitals & (3 << (P + D + F))) >> (P + D + F));
     printf(ColorBlue " p: ");
-    for (int i_p = 0; i_p < P / 2; ++i_p) {
-        printArrow(electronConfig->pOrbital[i_p].spinUp, electronConfig->pOrbital[i_p].spinDown);
+    for (int p = P / 2; p > 0; --p) {
+        printArrow((electronConfig->orbitals & (3 << ((p - 1) * 2 + D + F))) >> ((p - 1) * 2 + D + F));
     }
     printf(ColorYellow " d: ");
-    for (int i_d = 0; i_d < D / 2; ++i_d) {
-        printArrow(electronConfig->dOrbital[i_d].spinUp, electronConfig->dOrbital[i_d].spinDown);
+    for (int d = D / 2; d > 0; --d) {
+        printArrow((electronConfig->orbitals & (3 << ((d - 1) * 2 + F))) >> ((d - 1) * 2 + F));
     }
     printf(ColorMagenta " f: ");
-    for (int i_f = 0; i_f < F / 2; ++i_f) {
-        printArrow(electronConfig->fOrbital[i_f].spinUp, electronConfig->fOrbital[i_f].spinDown);
+    for (int f = F / 2; f > 0; --f) {
+        printArrow((electronConfig->orbitals & (3 << ((f - 1) * 2))) >> ((f - 1) * 2));
     }
     printf(ColorWhite " Ml: %2d Ms: %4.1f" TextReset "\n", electronConfig->ml, electronConfig->ms);
 }
@@ -59,43 +59,40 @@ void print_econfig(ElectronConfig *electronConfig, unsigned int array_len) {
     assert(electronConfig != NULL && array_len > 0);
     printf("Possibilities:\n");
     for (unsigned int i = 0; i < array_len; i++) {
-        printf(ColorCyan "line: %3u ", i + 1);
+        printf(ColorCyan "line: %4u ", i + 1);
         print_econfig_element(&electronConfig[i]);
     }
 }
 
 void econfig_manipulation(ElectronConfig *electronConfig,
                           unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
-                          short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F]) {
-    assert(electronConfig != NULL && s_possibilities != NULL && p_possibilities != NULL && d_possibilities != NULL && f_possibilities != NULL );
+                          unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities) {
+    assert(electronConfig != NULL && s_possibilities != NULL && p_possibilities != NULL && d_possibilities != NULL && f_possibilities != NULL);
     unsigned int d_combs = possibilities_f * possibilities_d;
     unsigned int p_combs = d_combs * possibilities_p;
     unsigned int s_combs = p_combs * possibilities_s;
 
     for (unsigned int i = 0; i < s_combs; i++) {
-        electronConfig[i].sOrbital.spinUp = s_possibilities[i / p_combs][0];
-        electronConfig[i].sOrbital.spinDown = s_possibilities[i / p_combs][1];
-        electronConfig[i].ms = (float)electronConfig[i].sOrbital.spinUp - (float)electronConfig[i].sOrbital.spinDown;
+        electronConfig[i].orbitals = ((((
+                (s_possibilities[i / p_combs] << P)
+                | p_possibilities[(i % p_combs) / d_combs]) << D)
+                        | d_possibilities[(i % d_combs) / possibilities_f]) << F)
+                                | f_possibilities[i % possibilities_f];
+        electronConfig[i].ms = (float)((electronConfig[i].orbitals & (1 << 31)) >> 31) - (float)((electronConfig[i].orbitals & (1 << 30)) >> 30);
         electronConfig[i].ml = 0;
+        for (int pdf = (P + D + F) / 2 - 1; pdf >= (D + F) / 2; --pdf) {
+            electronConfig[i].ms += (float)((electronConfig[i].orbitals & (1 << (pdf * 2 + 1))) >> (pdf * 2 + 1)) - (float)((electronConfig[i].orbitals & (1 << (pdf * 2))) >> (pdf * 2));
+            electronConfig[i].ml += (((electronConfig[i].orbitals & (1 << (pdf * 2 + 1))) >> (pdf * 2 + 1)) + ((electronConfig[i].orbitals & (1 << (pdf * 2))) >> (pdf * 2))) * (-(pdf - (D + F) / 2) + 1);
+        }
+        for (int df = (D + F) / 2 - 1; df >= F / 2; --df) {
+            electronConfig[i].ms += (float)((electronConfig[i].orbitals & (1 << (df * 2 + 1))) >> (df * 2 + 1)) - (float)((electronConfig[i].orbitals & (1 << (df * 2))) >> (df * 2));
+            electronConfig[i].ml += (((electronConfig[i].orbitals & (1 << (df * 2 + 1))) >> (df * 2 + 1)) + ((electronConfig[i].orbitals & (1 << (df * 2))) >> (df * 2))) * (-(df - F / 2) + 2);
+        }
+        for (int f = F / 2 - 1; f >= 0 / 2; --f) {
+            electronConfig[i].ms += (float)((electronConfig[i].orbitals & (1 << (f * 2 + 1))) >> (f * 2 + 1)) - (float)((electronConfig[i].orbitals & (1 << (f * 2))) >> (f * 2));
+            electronConfig[i].ml += (((electronConfig[i].orbitals & (1 << (f * 2 + 1))) >> (f * 2 + 1)) + ((electronConfig[i].orbitals & (1 << (f * 2))) >> (f * 2))) * (-f + 3);
+        }
         electronConfig[i].group = 0;
-        for (unsigned short i_p = 0; i_p < P / 2; i_p++) {
-            electronConfig[i].pOrbital[i_p].spinUp = p_possibilities[(i % p_combs) / d_combs][2 * i_p];
-            electronConfig[i].pOrbital[i_p].spinDown = p_possibilities[(i % p_combs) / d_combs][2 * i_p + 1];
-            electronConfig[i].ms += (float)electronConfig[i].pOrbital[i_p].spinUp - (float)electronConfig[i].pOrbital[i_p].spinDown;
-            electronConfig[i].ml += (electronConfig[i].pOrbital[i_p].spinUp + electronConfig[i].pOrbital[i_p].spinDown) * (i_p - 1);
-        }
-        for (unsigned short i_d = 0; i_d < D / 2; i_d++) {
-            electronConfig[i].dOrbital[i_d].spinUp = d_possibilities[(i % d_combs) / possibilities_f][2 * i_d];
-            electronConfig[i].dOrbital[i_d].spinDown = d_possibilities[(i % d_combs) / possibilities_f][2 * i_d + 1];
-            electronConfig[i].ms += (float)electronConfig[i].dOrbital[i_d].spinUp - (float)electronConfig[i].dOrbital[i_d].spinDown;
-            electronConfig[i].ml += (electronConfig[i].dOrbital[i_d].spinUp + electronConfig[i].dOrbital[i_d].spinDown) * (i_d - 2);
-        }
-        for (unsigned short i_f = 0; i_f < F / 2; i_f++) {
-            electronConfig[i].fOrbital[i_f].spinUp = f_possibilities[i % possibilities_f][2 * i_f];
-            electronConfig[i].fOrbital[i_f].spinDown = f_possibilities[i % possibilities_f][2 * i_f + 1];
-            electronConfig[i].ms += (float)electronConfig[i].fOrbital[i_f].spinUp - (float)electronConfig[i].fOrbital[i_f].spinDown;
-            electronConfig[i].ml += (electronConfig[i].fOrbital[i_f].spinUp + electronConfig[i].fOrbital[i_f].spinDown) * (i_f - 3);
-        }
         electronConfig[i].ms /= 2;
     }
 }

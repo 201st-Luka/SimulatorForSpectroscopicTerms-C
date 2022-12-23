@@ -29,18 +29,18 @@ unsigned int combinations_k_l (unsigned int k, unsigned int l);
 unsigned int possibilities_for_combination(unsigned int n, unsigned int max_electrons);
 
 /*
- * permutes 2 numbers in the array (recursive)
- * @precondition:   subResult != NULL, numberOnes <= length, index >= 0, resultIndex != NULL, result != NULL
+ * creates the permutations (recursive)
+ * @precondition:   result != NULL, ones <= length, i <= length, result_len != NULL
  * @postcondition:  /
  */
-void permute(short *subResult, unsigned int numberOnes, unsigned int length, unsigned int index, unsigned int *resultIndex, short result[][length]);
+void permute(unsigned short *result, unsigned short perm, unsigned int ones, unsigned int length, unsigned int i, unsigned int *result_len);
 
 /*
  * initialise the creation of a list permutation
- * @precondition:   numberOnes <= length, result != NULL
+ * @precondition:   result != NULL, ones <= length
  * @postcondition:  the combinations are saved in result
  */
-void generate_permutation(unsigned int numberOnes, unsigned int length, short result[][length]);
+void generate_permutation(unsigned int ones, unsigned int length, unsigned short *result);
 
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_COMBINATIONS_H

@@ -36,24 +36,13 @@
 #define ArrowSpinBoth "\u296e"
 #define BracketSpace "\u02FD"
 
-/*
- * Orbital struct
- * 4 bytes
- */
-typedef struct {
-    short spinUp;
-    short spinDown;
-} Orbital;
 
 /*
  * ElectronConfig struct
  * 76 bytes
  */
 typedef struct {
-    Orbital sOrbital;
-    Orbital pOrbital[3];
-    Orbital dOrbital[5];
-    Orbital fOrbital[7];
+    unsigned int orbitals;
     short ml;
     float ms;
     unsigned short group;
@@ -66,14 +55,14 @@ typedef struct {
  *                  and number_of_electrons is valid
  * @postcondition:  combinations are saved in s_possibilities, p_possibilities, d_possibilities, f_possibilities
  */
-void permutation_creation(short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F],
+void permutation_creation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
                           const unsigned short *number_of_electrons);
 /*
  * prints out the right arrow for the orbital
  * @precondition:   /
  * @postcondition:  /
  */
-void printArrow(short spinUp, short spinDown);
+void printArrow(unsigned short spins);
 
 /*
  * prints out the values of an ElectronConfig element
@@ -90,7 +79,7 @@ void print_econfig_element(ElectronConfig *electronConfig);
 void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
 
 /*
- * set the pointer of the ElectronConfig array to the created permutations
+ * set the values of the ElectronConfig array orbitals to the values of the created permutations
  * @precondition:   electronConfig != NULL, s_possibilities, p_possibilities, d_possibilities, f_possibilities
  *                  have the right values
  *                  and possibilities_s, possibilities_p, possibilities_d, possibilities_f > 0
@@ -98,7 +87,7 @@ void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
  */
 void econfig_manipulation(ElectronConfig *electronConfig,
                           unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
-                          short s_possibilities[][S], short p_possibilities[][P], short d_possibilities[][D], short f_possibilities[][F]);
+                          unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities);
 
 /*
  * builds the groups for the electronConfig
