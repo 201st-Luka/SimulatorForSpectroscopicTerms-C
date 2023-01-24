@@ -14,7 +14,8 @@
  * 10 bytes
  */
 typedef struct {
-    unsigned short abs_ml, abs_ms, group_id;
+    unsigned short abs_ml, group_id;
+    float abs_ms;
     unsigned int group_elements_count;
 } Group;
 
@@ -47,7 +48,7 @@ short appendGroup(Groups *groups);
  * @precondition:   electron_config != NULL and array_len > 0
  * @postcondition:  findMaxMsNoGroupWithMl becomes the highest ms value of an electron config that is not in any group and ml is ml
  */
-float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array_len, unsigned int ml);
+float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array_len, short ml);
 
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H

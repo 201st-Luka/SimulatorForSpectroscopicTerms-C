@@ -6,6 +6,8 @@
 #ifndef SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H
 #define SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H
 
+#include <stdio.h>
+
 
 // colors
 
@@ -89,12 +91,8 @@ void econfig_manipulation(ElectronConfig *electronConfig,
                           unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
                           unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities);
 
-/*
- * builds the groups for the electronConfig
- * @precondition:   electronConfig and groups != NULL, ec_array_len and group_array_len > 0
- * @postcondition:  groups gets values, electronConfig[x].group is updated
- */
-//void buildGroups(ElectronConfig *electronConfig, unsigned int ec_array_len, Group *groups, unsigned int group_array_len);
+void saveEConfigElementInFile(ElectronConfig *electron_config_array, FILE *file);
 
+void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array_len);
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_ECONFIG_H

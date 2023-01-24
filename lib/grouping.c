@@ -35,7 +35,7 @@ short appendGroup(Groups *groups) {
     }
 }
 
-float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array_len, unsigned int ml) {
+float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array_len, short ml) {
     assert(electron_config != NULL && array_len > 0);
     float max_ms = 0;
     for (unsigned int i = 0; i < array_len / 2; i++ ) {
@@ -47,4 +47,30 @@ float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array
         }
     }
     return max_ms;
+}
+
+void setGroups(ElectronConfig *electron_config, unsigned int array_len, short ml, float ms, unsigned short group_id) {
+    /*
+     * how is the structure of the groups? are there any rules or predefined sizes??
+     * construction of groups is difficult to make without any knowledge about the groups
+     */
+    for (short i_ms = (short)(-ms * 2); (((float)i_ms) / 2) <= ms; ++i_ms) {
+        short found = 0;
+        for (unsigned int i = 0; i < array_len && !found; ++i) {
+            if (electron_config[i].ml == ml && electron_config[i].ms == ((float)i_ms / 2) && !(electron_config[i].group)) {
+                electron_config[i].group = group_id;
+                found = 1;
+            }
+        }
+    }
+}
+
+void fillGroups(Groups *groups, short ml, float ms) {
+
+}
+
+void printGroups(Groups *groups) {
+    for (unsigned short i = 0; i < groups->group_count; i++) {
+        printf("abs_ml: %hu, abs_ms: %f, group_id: %hu", groups->group[i].abs_ml, groups->group[i].abs_ms, groups->group[i].group_id);
+    }
 }
