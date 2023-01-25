@@ -38,9 +38,7 @@ void close() {
     printf("Exit...");
 }
 
-void simulator(short b_print, short by_args) {
-    unsigned short electrons[4];
-    collectInput(electrons);
+void simulator(short b_print, short by_args, unsigned short *electrons) {
     // check if electrons is valid
     if (electrons[0] <= S && electrons[1] <= P && electrons[2] <= D && electrons[3] <= F) {
         // electrons is valid
@@ -154,7 +152,8 @@ void startArgs(int argc, char **argv) {
             printf("Version: %u.%u", simulator_version.master_version, simulator_version.version);
             break;
         case 2:
-            printf("s=%hd, p=%hd, d=%2hd, f=%hd\n", command_line_input[0], command_line_input[1], command_line_input[2], command_line_input[3]);
+            printf("s=%hd, p=%hd, d=%2hd, f=%hd\n",
+                   command_line_input[0], command_line_input[1], command_line_input[2], command_line_input[3]);
             simulator(0, 1, command_line_input);
             break;
     }
@@ -171,6 +170,7 @@ int main(int argc, char **argv) {
 
         // main loop
         while (user_command) {
+            unsigned short input[4];
             printf(" 1 Enter values and print out electron configuration possibilities with groups\n"
                    " 2 Enter values and print out groups\n"
                    " 3 Show GitHub page\n"
@@ -181,16 +181,20 @@ int main(int argc, char **argv) {
             // catch all chars that are in the input buffer
             while ((getchar()) != '\n');
 
+            if (user_command != 3 && user_command != 4 && user_command !=0) {
+                collectInput(input);
+            }
+
             // switch different cases for the entered user command
             switch (user_command) {
                 case closeProgram:
                     close();
                     break;
                 case printValuesAndGroups:
-                    simulator(1, 0);
+                    simulator(1, 0, input);
                     break;
                 case printGroups:
-                    simulator(0, 0);
+                    simulator(0, 0, input);
                     break;
                 case gitHub:
                     printf("The GitHub link is:\n%s\n", gitHubLink);
@@ -202,7 +206,7 @@ int main(int argc, char **argv) {
                     break;
                 default:
                     printf("Default selected (1)");
-                    simulator(1, 0);
+                    simulator(1, 0, input);
                     user_command = 1;
             }
             printf("\n");
