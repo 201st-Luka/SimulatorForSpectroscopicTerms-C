@@ -11,12 +11,12 @@
 
 /*
  * Group struct
- * 10 bytes
+ * 24 bytes
  */
 typedef struct {
-    unsigned short abs_ml, group_id;
-    float abs_ms;
-    unsigned int group_elements_count;
+    unsigned short absMl, id, elementsCount;
+    float absMs;
+    unsigned int *elements;
 } Group;
 
 /*
@@ -25,16 +25,16 @@ typedef struct {
  */
 typedef struct {
     Group *group;
-    unsigned short group_count;
+    unsigned short groupCount;
 } Groups;
 
 
 /*
- * returns the max ml of an electron config without a group in the electron_config array
- * @precondition:   electron_config != NULL and array_len > 0
+ * returns the max ml of an electron config without a group in the electronConfig array
+ * @precondition:   electronConfig != NULL and arrayLen > 0
  * @postcondition:  findMaxMlNoGroup becomes the highest ml value of an electron config that is not in any group
  */
-short findMaxMlNoGroup(ElectronConfig *electron_config, unsigned int array_len);
+unsigned short findMaxMlNoGroup(ElectronConfig *electronConfig, unsigned int arrayLen);
 
 /*
  * appends the group array by 1 element
@@ -44,11 +44,27 @@ short findMaxMlNoGroup(ElectronConfig *electron_config, unsigned int array_len);
 short appendGroup(Groups *groups);
 
 /*
- * returns the max ms of an electron config without a group in the electron_config array and with a ml value
- * @precondition:   electron_config != NULL and array_len > 0
+ * returns the max ms of an electron config without a group in the electronConfig array and with a ml value
+ * @precondition:   electronConfig != NULL and arrayLen > 0
  * @postcondition:  findMaxMsNoGroupWithMl becomes the highest ms value of an electron config that is not in any group and ml is ml
  */
-float findMaxMsNoGroupWithMl(ElectronConfig *electron_config, unsigned int array_len, short ml);
+float findMaxMsNoGroupWithMl(ElectronConfig *electronConfig, unsigned int arrayLen, unsigned short ml);
+
+int groupElementCount(float ms);
+
+void setGroup(ElectronConfig *electron_config, unsigned int array_len, Group *group);
+
+void printGroupsContent(Groups *groups);
+
+Groups *constructGroups();
+
+void freeGroup(Group *group);
+
+void freeGroups(Groups *groups);
+
+unsigned int sumGroupElements(Groups *groups);
+
+void setGroups(ElectronConfig *electron_config, unsigned int array_len, Groups *groups);
 
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H

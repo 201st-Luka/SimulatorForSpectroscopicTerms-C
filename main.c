@@ -22,7 +22,8 @@ typedef enum {
     printValuesAndGroups,
     printGroups,
     gitHub,
-    gitHubWiki
+    gitHubWiki,
+    version
 } Task;
 
 const SimulatorVersion simulator_version = {0, 1};
@@ -67,10 +68,10 @@ void simulator(short b_print, unsigned short *electrons) {
                                  possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
                                  s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
-            Group *groups_ptr = malloc(sizeof(Group));
-            Groups groups;
-            groups.group = groups_ptr;
-            groups.group_count = 1;
+            Groups *groups = constructGroups();
+            setGroups(electron_config_array,
+                      possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f,
+                      groups);
 
             if (b_print) {
                 if (possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f <=
@@ -85,27 +86,16 @@ void simulator(short b_print, unsigned short *electrons) {
                            MaxConsoleLines);
                 }
             }
+            printGroupsContent(groups);
 
-            printf("max ml: %hd, max ms for max ml: %.1f\n", findMaxMlNoGroup(
-                           electron_config_array,
-                           possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f
-                   ), findMaxMsNoGroupWithMl(
-                           electron_config_array,
-                           possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f,
-                           findMaxMlNoGroup(
-                                   electron_config_array,
-                                   possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f
-                           )
-                   )
-            );
-
-            // free the memory for electron_config_array (because of dynamic allocation)
+            // free the memory for electron_config_array, groups (because of dynamic allocation)
             free(electron_config_array);
+            freeGroups(groups);
         } else {
             printf(ColorRed "MEMORY ERROR:" TextReset " Not enough free memory.");
         }
     } else {
-        // electrons is invalid
+        // electrons array is invalid
         printf("Your entered values are not valid.\n"
                "The maximal valid values are %d, %d, %d, %d for s, p, d, f.\n"
                "Your values were:\n", S, P, D, F);
@@ -120,7 +110,7 @@ void simulator(short b_print, unsigned short *electrons) {
     }
 }
 
-int main(int argc, char **argv) {
+int main() {
     unsigned short user_command;
 
     printf(UnderlineColorWhite "Started the Chemistry Program\n" TextReset);
@@ -161,6 +151,11 @@ int main(int argc, char **argv) {
             case gitHubWiki:
                 printf("The GitHub wiki link is:\n%s\n", gitHubWikiLink);
                 system("open " gitHubWikiLink);
+                break;
+            case version:
+                printf("The version of the Simulator is %hu.%hu.",
+                       simulator_version.master_version,
+                       simulator_version.version);
                 break;
             default:
                 printf("Default selected (1)");
