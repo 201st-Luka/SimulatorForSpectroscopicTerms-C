@@ -57,8 +57,8 @@ typedef struct {
  *                  and number_of_electrons is valid
  * @postcondition:  combinations are saved in s_possibilities, p_possibilities, d_possibilities, f_possibilities
  */
-void permutation_creation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
-                          const unsigned short *number_of_electrons);
+void permutationCreation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
+                         const unsigned short *number_of_electrons);
 /*
  * prints out the right arrow for the orbital
  * @precondition:   /
@@ -71,14 +71,14 @@ void printArrow(unsigned short spins);
  * @precondition:   electronConfig != NULL
  * @postcondition:  /
  */
-void print_econfig_element(ElectronConfig *electronConfig);
+void printEConfigElement(ElectronConfig *electronConfig);
 
 /*
  * prints out every single element of the electronConfig array
  * @precondition:   electronConfig != NULL and array_len > 0
  * @postcondition:  /
  */
-void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
+void printEConfig(ElectronConfig *electronConfig, unsigned int array_len);
 
 /*
  * set the values of the ElectronConfig array orbitals to the values of the created permutations
@@ -87,9 +87,9 @@ void print_econfig(ElectronConfig *electronConfig, unsigned int array_len);
  *                  and possibilities_s, possibilities_p, possibilities_d, possibilities_f > 0
  * @postcondition:  electronConfig gets the right pointer values and ms, ml are calculated
  */
-void econfig_manipulation(ElectronConfig *electronConfig,
-                          unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
-                          unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities);
+void eConfigManipulation(ElectronConfig *electronConfig,
+                         unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
+                         const unsigned short *s_possibilities, const unsigned short *p_possibilities, const unsigned short *d_possibilities, const unsigned short *f_possibilities);
 
 void saveEConfigElementInFile(ElectronConfig *electron_config_array, FILE *file);
 

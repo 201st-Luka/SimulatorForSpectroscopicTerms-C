@@ -55,18 +55,21 @@ void simulator(short b_print, unsigned short *electrons) {
                 d_possibilities[possibilities_for_d],
                 f_possibilities[possibilities_for_f];
 
+        printf("Number of possibilities: %u\n",
+               possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
+
         ElectronConfig *electron_config_array = (ElectronConfig *) malloc(
                 possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f *
                 sizeof(ElectronConfig)
         );
         if (electron_config_array != NULL) {
 
-            permutation_creation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
-                                 electrons);
+            permutationCreation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
+                                electrons);
 
-            econfig_manipulation(electron_config_array,
-                                 possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
-                                 s_possibilities, p_possibilities, d_possibilities, f_possibilities);
+            eConfigManipulation(electron_config_array,
+                                possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
+                                s_possibilities, p_possibilities, d_possibilities, f_possibilities);
 
             Groups *groups = constructGroups();
             setGroups(electron_config_array,
@@ -78,9 +81,9 @@ void simulator(short b_print, unsigned short *electrons) {
                     MaxConsoleLines) {
                     printf("Number of possibilities: %u\n",
                            possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
-                    print_econfig(electron_config_array,
-                                  possibilities_for_s * possibilities_for_p * possibilities_for_d *
-                                  possibilities_for_f);
+                    printEConfig(electron_config_array,
+                                 possibilities_for_s * possibilities_for_p * possibilities_for_d *
+                                 possibilities_for_f);
                 } else {
                     printf(ColorRed "So many combinations can not be printed in the console. The maximum is %d.\n" TextReset,
                            MaxConsoleLines);
@@ -113,12 +116,12 @@ void simulator(short b_print, unsigned short *electrons) {
 int main() {
     unsigned short user_command;
 
-    printf(UnderlineColorWhite "Started the Chemistry Program\n" TextReset);
+    printf(UnderlineColorWhite "Simulator for spectroscopic terms\n" TextReset);
     user_command = 1;
 
     // main loop
     while (user_command) {
-        unsigned short input[4];
+        unsigned short input[4] = {0, 0, 0, 0};
         printf(" 1 Enter values and print out electron configuration possibilities with groups\n"
                " 2 Enter values and print out groups\n"
                " 3 Show GitHub page\n"

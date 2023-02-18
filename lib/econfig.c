@@ -6,14 +6,13 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <time.h>
 
 #include "econfig.h"
 #include "combinations.h"
 
 
-void permutation_creation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
-                          const unsigned short *number_of_electrons) {
+void permutationCreation(unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities,
+                         const unsigned short *number_of_electrons) {
     assert(
             s_possibilities != NULL && p_possibilities != NULL && d_possibilities != NULL && f_possibilities != NULL &&
             number_of_electrons != NULL &&
@@ -37,7 +36,7 @@ void printArrow(unsigned short spins) {
     }
 }
 
-void print_econfig_element(ElectronConfig *electronConfig) {
+void printEConfigElement(ElectronConfig *electronConfig) {
     assert(electronConfig != NULL);
     printf(ColorGreen "s: ");
     printArrow((electronConfig->orbitals & (3 << (P + D + F))) >> (P + D + F));
@@ -53,21 +52,22 @@ void print_econfig_element(ElectronConfig *electronConfig) {
     for (int f = F / 2; f > 0; --f) {
         printArrow((electronConfig->orbitals & (3 << ((f - 1) * 2))) >> ((f - 1) * 2));
     }
-    printf(ColorWhite " Ml: %2d Ms: %4.1f" TextReset "\n", electronConfig->ml, electronConfig->ms);
+    printf(ColorWhite " Ml: %2d Ms: %4.1f group: %hu" TextReset "\n", electronConfig->ml, electronConfig->ms, electronConfig->group);
 }
 
-void print_econfig(ElectronConfig *electronConfig, unsigned int array_len) {
+void printEConfig(ElectronConfig *electronConfig, unsigned int array_len) {
     assert(electronConfig != NULL && array_len > 0);
     printf("Possibilities:\n");
     for (unsigned int i = 0; i < array_len; i++) {
         printf(ColorCyan "line: %4u ", i + 1);
-        print_econfig_element(&electronConfig[i]);
+        printEConfigElement(&electronConfig[i]);
     }
 }
 
-void econfig_manipulation(ElectronConfig *electronConfig,
-                          unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
-                          unsigned short *s_possibilities, unsigned short *p_possibilities, unsigned short *d_possibilities, unsigned short *f_possibilities) {
+void eConfigManipulation(ElectronConfig *electronConfig,
+                         unsigned int possibilities_f, unsigned int possibilities_d, unsigned int possibilities_p, unsigned int possibilities_s,
+                         const unsigned short *s_possibilities, const unsigned short *p_possibilities,
+                         const unsigned short *d_possibilities, const unsigned short *f_possibilities) {
     assert(electronConfig != NULL && s_possibilities != NULL && p_possibilities != NULL && d_possibilities != NULL && f_possibilities != NULL);
     unsigned int d_combs = possibilities_f * possibilities_d;
     unsigned int p_combs = d_combs * possibilities_p;
@@ -95,68 +95,5 @@ void econfig_manipulation(ElectronConfig *electronConfig,
         }
         electronConfig[i].group = 0;
         electronConfig[i].ms /= 2;
-    }
-}
-
-void saveEConfigElementInFile(ElectronConfig *electron_config_array, FILE *file) {
-    for (short i = 31; i >= 0; --i) {
-        fprintf(file, ", %u", (electron_config_array->orbitals & (1 << i)) >> i);
-    }
-    fprintf(file, ", %d, %.1f\n", electron_config_array->ml, electron_config_array->ms);
-}
-
-void saveEConfigInFile(ElectronConfig *electron_config_array, unsigned int array_len) {
-    time_t time_raw;
-    struct tm *time_formatted;
-    time( &time_raw );
-    time_formatted = localtime(&time_raw );
-    char filename[28];
-    filename[0] = 't';
-    filename[1] = 'a';
-    filename[2] = 's';
-    filename[3] = 'k';
-    filename[4] = '_';
-    filename[5] = (char)((time_formatted->tm_year + 1900) / 1000 + 48);
-    filename[6] = (char)(((time_formatted->tm_year + 1900) % 1000) / 100 + 48);
-    filename[7] = (char)(((time_formatted->tm_year + 1900) % 100) / 10 + 48);
-    filename[8] = (char)((time_formatted->tm_year + 1900) % 10 + 48);
-    filename[9] = '-';
-    filename[10] = (char)((time_formatted->tm_mon + 1) / 10 + 48);
-    filename[11] = (char)((time_formatted->tm_mon + 1) % 10 + 48);
-    filename[12] = '-';
-    filename[13] = (char)(time_formatted->tm_mday / 10 + 48);
-    filename[14] = (char)(time_formatted->tm_mday % 10 + 48);
-    filename[15] = '_';
-    filename[16] = (char)(time_formatted->tm_hour / 10 + 48);
-    filename[17] = (char)(time_formatted->tm_hour % 10 + 48);
-    filename[18] = '-';
-    filename[19] = (char)(time_formatted->tm_min / 10 + 48);
-    filename[20] = (char)(time_formatted->tm_min % 10 + 48);
-    filename[21] = '-';
-    filename[22] = (char)(time_formatted->tm_sec / 10 + 48);
-    filename[23] = (char)(time_formatted->tm_sec % 10 + 48);
-    filename[24] = '.';
-    filename[25] = 'c';
-    filename[26] = 's';
-    filename[27] = 'v';
-    filename[28] = '\0';
-
-    FILE *file = fopen(filename, "w");
-    if (file != NULL) {
-        printf("Values are saved in '%s'...\n", filename);
-        fprintf(file,
-                "line, s_up, s_down, "
-                "p1_up, p1_down, p2_up, p2_down, p3_up, p3_down, "
-                "d1_up, d1_down, d2_up, d2_down, d3_up, d3_down, d4_up, d4_down, d5_up, d5_down, "
-                "f1_up, f1_down, f2_up, f2_down, f3_up, f3_down, f4_up, f4_down, f5_up, f5_down, f6_up, f6_down, f7_up, f7_down, "
-                "ms, ml\n");
-        for (unsigned int i = 0; i < array_len; i++) {
-            fprintf(file, "%u", i + 1);
-            saveEConfigElementInFile(&(electron_config_array[i]), file);
-        }
-        fclose(file);
-        printf("Saved.\n");
-    } else {
-        printf("Could not save values in a file. Please try again.\n");
     }
 }
