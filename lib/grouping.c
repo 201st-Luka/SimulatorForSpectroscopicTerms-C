@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "grouping.h"
+#include "econfig.h"
 
 
 short appendGroup(Groups *groups) {
@@ -112,5 +113,21 @@ void setGroups(ElectronConfig *electronConfig, unsigned int arrayLen, Groups *gr
             printf(ColorRed "An Error occurred while building the groups." TextReset);
             break;
         }
+    }
+}
+
+void printGroupElements(ElectronConfig *electronConfig, unsigned int arrayLen, Group *group) {
+    assert(electronConfig != NULL && arrayLen > 0 && group != NULL);
+    for (int i = 0; i < arrayLen; ++i) {
+        if (electronConfig[i].group == group->id)
+            printEConfigElement(&electronConfig[i]);
+    }
+}
+
+void printGroupsElements(ElectronConfig *electronConfig, unsigned int arrayLen, Groups *groups) {
+    assert(electronConfig != NULL && arrayLen > 0 && groups != NULL && groups->groupCount > 0);
+    for (int i = 0; i < groups->groupCount; ++i) {
+        printf("Group %hu:\n", groups->group[i].id);
+        printGroupElements(electronConfig, arrayLen, &groups->group[i]);
     }
 }

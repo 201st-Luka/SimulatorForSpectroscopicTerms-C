@@ -99,5 +99,19 @@ short checkElementsGroup(ElectronConfig *electronConfig, unsigned int array_len)
  */
 void setGroups(ElectronConfig *electronConfig, unsigned int arrayLen, Groups *groups);
 
+/*
+ * prints the electronConfig elements that are in the group
+ * @precondition:   electronConfig != NULL && arrayLen > 0 && group != NULL
+ * @postcondition:  /
+ */
+void printGroupElements(ElectronConfig *electronConfig, unsigned int arrayLen, Group *group);
+
+/*
+ * prints the electronConfig elements by groups
+ * @precondition:   electronConfig != NULL && arrayLen > 0 && groups != NULL && groups->groupCount > 0
+ * @postcondition:  /
+ */
+void printGroupsElements(ElectronConfig *electronConfig, unsigned int arrayLen, Groups *groups);
+
 
 #endif //SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H

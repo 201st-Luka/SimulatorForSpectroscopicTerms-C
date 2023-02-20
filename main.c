@@ -90,6 +90,9 @@ void simulator(short b_print, unsigned short *electrons) {
                 }
             }
             printGroupsContent(groups);
+            printGroupsElements(electron_config_array,
+                                possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f,
+                                groups);
 
             // free the memory for electron_config_array, groups (because of dynamic allocation)
             free(electron_config_array);
