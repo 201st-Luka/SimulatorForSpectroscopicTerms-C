@@ -1,5 +1,5 @@
 /*
- * combinations file
+ * combinatoric file
  * contains the implementations of the functions
  */
 

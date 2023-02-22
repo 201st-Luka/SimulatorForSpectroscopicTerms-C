@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/econfig.h"
-#include "lib/combinations.h"
-#include "lib/grouping.h"
-
+#include "lib/lib.h"
 
 #define MaxConsoleLines 1680
 
@@ -28,98 +25,60 @@ typedef enum {
 
 const SimulatorVersion simulator_version = {0, 1};
 
-void collectInput(unsigned short *input) {
-    printf("Enter your electron configuration (format: s, p, d, f):\n");
-    // keyboard input demand for number of electrons
-    scanf(" %hu, %hu, %hu, %hu", &input[0], &input[1], &input[2], &input[3]);
-    while ((getchar()) != '\n');
-}
-
 void close() {
     printf("Exit...");
 }
 
 void simulator(short b_print, unsigned short *electrons) {
     // check if electrons is valid
-    if (electrons[0] <= S && electrons[1] <= P && electrons[2] <= D && electrons[3] <= F) {
+    if (electrons[0] <= S_ORBITAL && electrons[1] <= P_ORBITAL && electrons[2] <= D_ORBITAL && electrons[3] <= F_ORBITAL) {
         // electrons is valid
         printf("Processing your inputs...\n");
-        // calculate combinations
-        unsigned int possibilities_for_s = possibilities_for_combination(electrons[0], S),
-                possibilities_for_p = possibilities_for_combination(electrons[1], P),
-                possibilities_for_d = possibilities_for_combination(electrons[2], D),
-                possibilities_for_f = possibilities_for_combination(electrons[3], F);
 
-        unsigned short s_possibilities[possibilities_for_s],
-                p_possibilities[possibilities_for_p],
-                d_possibilities[possibilities_for_d],
-                f_possibilities[possibilities_for_f];
-
-        printf("Number of possibilities: %u\n",
-               possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
-
-        ElectronConfig *electron_config_array = (ElectronConfig *) malloc(
-                possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f *
-                sizeof(ElectronConfig)
-        );
-        if (electron_config_array != NULL) {
-
-            permutationCreation(s_possibilities, p_possibilities, d_possibilities, f_possibilities,
-                                electrons);
-
-            eConfigManipulation(electron_config_array,
-                                possibilities_for_f, possibilities_for_d, possibilities_for_p, possibilities_for_s,
-                                s_possibilities, p_possibilities, d_possibilities, f_possibilities);
-
-            Groups *groups = constructGroups();
-            setGroups(electron_config_array,
-                      possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f,
-                      groups);
-
+        ElectronConfig *electronConfig = createElectronConfig(electrons);
+        // print possibilities
+        if (electronConfig != NULL) {
+            Groups *groups;
             if (b_print) {
-                if (possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f <=
-                    MaxConsoleLines) {
-                    printf("Number of possibilities: %u\n",
-                           possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f);
-                    printEConfig(electron_config_array,
-                                 possibilities_for_s * possibilities_for_p * possibilities_for_d *
-                                 possibilities_for_f);
+                printf("Number of possibilities: %u\n",
+                       electronConfig->possibilities->countAll);
+                groups = createGroups(electronConfig);
+                if (electronConfig->possibilities->countAll <= MaxConsoleLines) {
+                    printEConfig(electronConfig);
                 } else {
-                    printf(ColorRed "So many combinations can not be printed in the console. The maximum is %d.\n" TextReset,
+                    printf(COLOR_RED "So many combinations can not be printed in the console. The maximum is %d.\n" TEXT_RESET,
                            MaxConsoleLines);
                 }
-            }
+            } else groups = createGroups(electronConfig);
             printGroupsContent(groups);
-            printGroupsElements(electron_config_array,
-                                possibilities_for_s * possibilities_for_p * possibilities_for_d * possibilities_for_f,
-                                groups);
+            //printGroupsElements(electronConfig);
 
             // free the memory for electron_config_array, groups (because of dynamic allocation)
-            free(electron_config_array);
-            freeGroups(groups);
+            destroyElectronConfig(electronConfig);
+            destroyGroups(groups);
         } else {
-            printf(ColorRed "MEMORY ERROR:" TextReset " Not enough free memory.");
+            printf(COLOR_RED "MEMORY ERROR:" TEXT_RESET " Not enough free memory.");
         }
     } else {
         // electrons array is invalid
         printf("Your entered values are not valid.\n"
-               "The maximal valid values are %d, %d, %d, %d for s, p, d, f.\n"
-               "Your values were:\n", S, P, D, F);
-        if (electrons[0] <= S) printf("%u, ", electrons[0]);
-        else printf(ColorRed "%u" TextReset ", ", electrons[0]);
-        if (electrons[1] <= P) printf("%u, ", electrons[1]);
-        else printf(ColorRed "%u" TextReset ", ", electrons[1]);
-        if (electrons[2] <= D) printf("%u, ", electrons[2]);
-        else printf(ColorRed "%u" TextReset ", ", electrons[2]);
-        if (electrons[3] <= F) printf("%u\n", electrons[3]);
-        else printf(ColorRed "%u" TextReset "\n", electrons[3]);
+               "The maximal valid values are %d, %d, %d, %d for S, P, D, F.\n"
+               "Your values were:\n", S_ORBITAL, P_ORBITAL, D_ORBITAL, F_ORBITAL);
+        if (electrons[0] <= S_ORBITAL) printf("%u, ", electrons[0]);
+        else printf(COLOR_RED "%u" TEXT_RESET ", ", electrons[0]);
+        if (electrons[1] <= P_ORBITAL) printf("%u, ", electrons[1]);
+        else printf(COLOR_RED "%u" TEXT_RESET ", ", electrons[1]);
+        if (electrons[2] <= D_ORBITAL) printf("%u, ", electrons[2]);
+        else printf(COLOR_RED "%u" TEXT_RESET ", ", electrons[2]);
+        if (electrons[3] <= F_ORBITAL) printf("%u\n", electrons[3]);
+        else printf(COLOR_RED "%u" TEXT_RESET "\n", electrons[3]);
     }
 }
 
 int main() {
     unsigned short user_command;
 
-    printf(UnderlineColorWhite "Simulator for spectroscopic terms\n" TextReset);
+    printf(UNDERLINE_COLOR_WHITE "Simulator for spectroscopic terms\n" TEXT_RESET);
     user_command = 1;
 
     // main loop
@@ -129,10 +88,11 @@ int main() {
                " 2 Enter values and print out groups\n"
                " 3 Show GitHub page\n"
                " 4 Show GitHub wiki page\n"
+               " 5 Show version\n"
                " 0 Close the program\n"
                "Selection: ");
         scanf("%1hu", &user_command);
-        // catch all chars that are in the input buffer
+        // catch countAll chars that are in the input buffer
         while ((getchar()) != '\n');
 
         if (user_command != 3 && user_command != 4 && user_command != 0) {
@@ -164,7 +124,7 @@ int main() {
                        simulator_version.version);
                 break;
             default:
-                printf("Default selected (1)");
+                printf("Default selected (1)\n");
                 simulator(1, input);
                 user_command = 1;
         }

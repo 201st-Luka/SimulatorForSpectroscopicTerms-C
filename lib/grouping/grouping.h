@@ -1,0 +1,13 @@
+//
+// Created by luka on 20.02.23.
+//
+
+#ifndef SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H
+#define SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H
+
+
+#include "group.h"
+#include "groups.h"
+
+
+#endif //SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H

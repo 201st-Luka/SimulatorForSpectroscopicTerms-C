@@ -1,0 +1,13 @@
+//
+// Created by luka on 20.02.23.
+//
+
+#ifndef SIMULATORFORSPECTROSCOPICTERMS_COMBINATORIC_H
+#define SIMULATORFORSPECTROSCOPICTERMS_COMBINATORIC_H
+
+
+#include "combinations.h"
+#include "possibilities.h"
+
+
+#endif //SIMULATORFORSPECTROSCOPICTERMS_COMBINATORIC_H

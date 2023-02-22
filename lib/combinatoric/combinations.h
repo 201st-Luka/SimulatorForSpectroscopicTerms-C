@@ -1,5 +1,5 @@
 /*
- * combinations header file
+ * combinatoric header file
  * contains function prototypes
  */
 
@@ -15,7 +15,7 @@
 unsigned long int factorial (unsigned int n);
 
 /*
- * compute the number of combinations
+ * compute the number of combinatoric
  * @precondition:   k, l > 0
  * @postcondition:  combinations_k_l becomes l! / (k! * (l - k)!)
  */
@@ -38,7 +38,7 @@ void permute(unsigned short *result, unsigned short perm, unsigned int ones, uns
 /*
  * initialise the creation of a list permutation
  * @precondition:   result != NULL, ones <= length
- * @postcondition:  the combinations are saved in result
+ * @postcondition:  the combinatoric are saved in result
  */
 void generate_permutation(unsigned int ones, unsigned int length, unsigned short *result);
 
