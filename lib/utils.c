@@ -1,6 +1,8 @@
-//
-// Created by luka on 20.02.23.
-//
+/*
+ * utils file
+ * contains the implementations of the functions
+ */
+
 
 #include <assert.h>
 
@@ -15,20 +17,19 @@ short checkElectronsValid(const unsigned short electrons[4]) {
         return 0;
 }
 
-short checkElementsGroup(ElectronConfig *electronConfig, unsigned int array_len) {
-    assert(electronConfig != NULL && array_len > 0);
-    short result = 1;
-    for (int i = 0; i < array_len && result; ++i) {
-        if (electronConfig->eCArray[i].group == 0) {
-            result = 0;
-        }
-    }
-    return result;
-}
-
 void collectInput(unsigned short *input) {
     printf("Enter your electron configuration (format: S, P, D, F):\n");
     // keyboard input demand for number of electrons
     scanf(" %hu, %hu, %hu, %hu", &input[0], &input[1], &input[2], &input[3]);
     while ((getchar()) != '\n');
 }
+
+int checkElementsGroup(ElectronConfig *electronConfig) {
+    int notFound = 1;
+    for (unsigned int i = 0; i < electronConfig->possibilities->countAll / 2 && notFound; ++i) {
+        if (!electronConfig->eCArray[i].group || !electronConfig->eCArray[electronConfig->possibilities->countAll - 1 - i].group)
+            notFound = 0;
+    }
+    return notFound;
+}
+

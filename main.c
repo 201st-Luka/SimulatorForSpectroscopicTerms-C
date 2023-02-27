@@ -1,19 +1,53 @@
+/**
+ * @author  201st-Luka
+ *
+ * @page    https://github.com/201st-Luka/SimulatorForSpectroscopicTerms
+ *
+ * @version 0.1
+ * @brief   main file
+ * @brief   contains the main body of the program
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "lib/lib.h"
 
+
 #define MaxConsoleLines 1680
 
 #define gitHubLink "https://github.com/201st-Luka/SimulatorForSpectroscopicTerms"
 #define gitHubWikiLink "https://github.com/201st-Luka/SimulatorForSpectroscopicTerms/wiki"
 
+/**
+ * @brief   Simulator version struct typedef
+ *
+ * @typedef SimulatorVersion
+ *
+ * @struct  unsigned short master_version
+ * @struct  unsigned short version
+ *
+ * @size    4 bytes
+ */
 typedef struct {
     unsigned short master_version,
             version;
 } SimulatorVersion;
 
+/**
+ * @brief   Task enum typedef
+ *
+ * @typedef Task
+ *
+ * @enum    closeProgram: 0
+ * @enum    printValuesAndGroups: 1
+ * @enum    printGroups: 2
+ * @enum    gitHub: 3
+ * @enum    gitHubWiki: 4
+ * @enum    version: 5
+ */
 typedef enum {
     closeProgram,
     printValuesAndGroups,
@@ -23,7 +57,12 @@ typedef enum {
     version
 } Task;
 
+
+/*
+ * the version of the simulator
+ */
 const SimulatorVersion simulator_version = {0, 1};
+
 
 void close() {
     printf("Exit...");
@@ -40,8 +79,7 @@ void simulator(short b_print, unsigned short *electrons) {
         if (electronConfig != NULL) {
             Groups *groups;
             if (b_print) {
-                printf("Number of possibilities: %u\n",
-                       electronConfig->possibilities->countAll);
+                printf("Number of possibilities: %u\n", electronConfig->possibilities->countAll);
                 groups = createGroups(electronConfig);
                 if (electronConfig->possibilities->countAll <= MaxConsoleLines) {
                     printEConfig(electronConfig);
@@ -50,7 +88,7 @@ void simulator(short b_print, unsigned short *electrons) {
                            MaxConsoleLines);
                 }
             } else groups = createGroups(electronConfig);
-            printGroupsContent(groups);
+            //printGroupsContent(groups);
             //printGroupsElements(electronConfig);
 
             // free the memory for electron_config_array, groups (because of dynamic allocation)

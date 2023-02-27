@@ -1,6 +1,8 @@
-//
-// Created by luka on 20.02.23.
-//
+/*
+ * possibilities file
+ * contains the implementations of the functions
+ */
+
 
 #include <stdlib.h>
 #include <assert.h>
@@ -10,12 +12,18 @@
 #include "combinations.h"
 
 
-void permutationCreation(Possibilities *possibilities, const unsigned short *number_of_electrons) {
-    assert(possibilities != NULL && number_of_electrons != NULL && checkElectronsValid(number_of_electrons));
-    generate_permutation(number_of_electrons[0], S_ORBITAL, possibilities->possibilitiesS);
-    generate_permutation(number_of_electrons[1], P_ORBITAL, possibilities->possibilitiesP);
-    generate_permutation(number_of_electrons[2], D_ORBITAL, possibilities->possibilitiesD);
-    generate_permutation(number_of_electrons[3], F_ORBITAL, possibilities->possibilitiesF);
+void permutationCreation(Possibilities *possibilities, const unsigned short *numberOfElectrons) {
+    assert(possibilities != NULL &&
+           possibilities->possibilitiesS != NULL &&
+           possibilities->possibilitiesP != NULL &&
+           possibilities->possibilitiesD != NULL &&
+           possibilities->possibilitiesF != NULL &&
+           numberOfElectrons != NULL &&
+           checkElectronsValid(numberOfElectrons));
+    generate_permutation(numberOfElectrons[0], S_ORBITAL, possibilities->possibilitiesS);
+    generate_permutation(numberOfElectrons[1], P_ORBITAL, possibilities->possibilitiesP);
+    generate_permutation(numberOfElectrons[2], D_ORBITAL, possibilities->possibilitiesD);
+    generate_permutation(numberOfElectrons[3], F_ORBITAL, possibilities->possibilitiesF);
 }
 
 Possibilities *createPossibilities(unsigned short electrons[4]) {

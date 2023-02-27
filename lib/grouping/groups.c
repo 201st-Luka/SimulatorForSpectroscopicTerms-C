@@ -1,16 +1,13 @@
-//
-// Created by luka on 20.02.23.
-//
-
-#include "groups.h"
 /*
- * grouping file
+ * groups file
  * contains the implementations of functions
  */
+
 
 #include <stdlib.h>
 #include <assert.h>
 
+#include "groups.h"
 #include "../utils.h"
 
 
@@ -27,7 +24,7 @@ short appendGroup(Groups *groups) {
 
 void printGroupsContent(Groups *groups) {
     assert(groups != NULL);
-    for (unsigned short i = 0; i < groups->groupCount; i++) {
+    for (unsigned int i = 0; i < groups->groupCount; i++) {
         printf("absMl: %hd, absMs: %4.1f, id: %hu\n", groups->group[i].absMl, groups->group[i].absMs, groups->group[i].id);
     }
 }
@@ -35,6 +32,9 @@ void printGroupsContent(Groups *groups) {
 Groups *createGroups(ElectronConfig *electronConfig) {
     Groups *groups = malloc(sizeof(Groups));
     Group *groups_ptr = malloc(sizeof(Group));
+
+    if (groups == NULL || groups_ptr == NULL) return NULL;
+
     groups->group = groups_ptr;
     groups->groupCount = 1;
 
@@ -53,6 +53,7 @@ void destroyGroups(Groups *groups){
         destroyGroup(&(groups->group[iGroup]));
     }
     free(groups->group);
+    free(groups);
 }
 
 void setGroups(ElectronConfig *electronConfig, Groups *groups) {
@@ -62,7 +63,7 @@ void setGroups(ElectronConfig *electronConfig, Groups *groups) {
     groups->group[groupIndex - 1].absMs = findMaxMsNoGroupWithMl(electronConfig, groups->group[0].absMl);
     groups->group[groupIndex - 1].id = groupIndex;
     setGroup(electronConfig, &groups->group[0]);
-    while (!checkElementsGroup(electronConfig, electronConfig->possibilities->countAll)) {
+    while (!checkElementsGroup(electronConfig)) {
         groupIndex += 1;
         if (appendGroup(groups)) {
             groups->group[groupIndex - 1].absMl = findMaxMlNoGroup(electronConfig);

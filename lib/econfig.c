@@ -102,12 +102,6 @@ ElectronConfig *createElectronConfig(unsigned short electrons[4]) {
     }
 
     electronConfig->possibilities = possibilities;
-    /*Groups *groups = createGroups();
-    if (groups == NULL) {
-        free(electronConfig);
-        free(possibilities);
-        return NULL;
-    }*/
 
     EConfig *eConfig = (EConfig *) malloc(sizeof(EConfig) * electronConfig->possibilities->countAll);
 

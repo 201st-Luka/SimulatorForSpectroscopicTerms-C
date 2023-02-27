@@ -1,7 +1,8 @@
 /*
- * combinatoric file
+ * combinations file
  * contains the implementations of the functions
  */
+
 
 #include <string.h>
 #include <assert.h>

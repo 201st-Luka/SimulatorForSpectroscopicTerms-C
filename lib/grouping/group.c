@@ -1,6 +1,8 @@
-//
-// Created by luka on 20.02.23.
-//
+/*
+ * group file
+ * contains the implementations of the functions
+ */
+
 
 #include <assert.h>
 
@@ -29,9 +31,6 @@ short findMaxMlNoGroup(ElectronConfig *electronConfig) {
                 electronConfig->eCArray[electronConfig->possibilities->countAll - 1 - i].ml > maxMl)
                 maxMl = electronConfig->eCArray[electronConfig->possibilities->countAll - 1 - i].ml;
         }
-        //if (!electronConfig->eCArray[i].group && electronConfig->eCArray[i].ml > maxMl) {
-        //    maxMl = electronConfig->eCArray[i].ml;
-        //}
     }
     return maxMl;
 }
@@ -86,9 +85,9 @@ void setGroup(ElectronConfig *electronConfig, Group *group) {
     }
 }
 
-void printGroupElements(ElectronConfig *electronConfig, unsigned int arrayLen, Group *group) {
-    assert(electronConfig != NULL && arrayLen > 0 && group != NULL);
-    for (int i = 0; i < arrayLen; ++i) {
+void printGroupElements(ElectronConfig *electronConfig, Group *group) {
+    assert(electronConfig != NULL && group != NULL);
+    for (int i = 0; i < electronConfig->possibilities->countAll; ++i) {
         if (electronConfig->eCArray[i].group == group->id)
             printEConfigElement(&electronConfig->eCArray[i]);
     }

@@ -1,6 +1,10 @@
-//
-// Created by luka on 20.02.23.
-//
+/**
+ * @author  201st-Luka
+ *
+ * @brief   grouping header file
+ * @brief   contains the imports of the headers in this directory
+ */
+
 
 #ifndef SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H
 #define SIMULATORFORSPECTROSCOPICTERMS_GROUPING_H
